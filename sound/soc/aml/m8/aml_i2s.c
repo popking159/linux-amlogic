@@ -51,6 +51,10 @@
 #define XRUN_NUM 10 /*10ms*10=100ms timeout*/
 #endif
 
+extern int output_volume; //Volume control
+extern struct mutex m_volume; //Volume mutex
+#define VOL_CTL(s) ((unsigned int)(((signed short)(s))*(vol)) >> 15) //Volume scaling from 0~100
+
 unsigned long aml_i2s_playback_start_addr = 0;
 EXPORT_SYMBOL(aml_i2s_playback_start_addr);
 
@@ -603,6 +607,7 @@ static int aml_i2s_copy_playback(struct snd_pcm_runtime *runtime, int channel,
 	int cached_len = tmp_buf->cached_len;
 	char *cache_buffer_bytes = tmp_buf->cache_buffer_bytes;
 #endif
+    unsigned int vol;
 	n = frames_to_bytes(runtime, count);
 	if (n > tmp_buf->buffer_size) {
 		dev_err(dev, "FATAL_ERR:UserData/%d > buffer_size/%d\n",
@@ -666,10 +671,14 @@ static int aml_i2s_copy_playback(struct snd_pcm_runtime *runtime, int channel,
 			left = to;
 			right = to + 16;
 
+            mutex_lock(&m_volume);
+            vol = (output_volume * 0x8000) / 100;
+			mutex_unlock(&m_volume);
+
 			for (j = 0; j < n; j += 64) {
 				for (i = 0; i < 16; i++) {
-					*left++ = (*tfrom++);
-					*right++ = (*tfrom++);
+					*left++ = (int16_t)(VOL_CTL(*tfrom++));
+					*right++ = (int16_t)(VOL_CTL(*tfrom++));
 				}
 				left += 16;
 				right += 16;

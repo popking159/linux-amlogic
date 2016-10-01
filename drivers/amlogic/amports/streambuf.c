@@ -205,6 +205,7 @@ u32 stbuf_level(struct stream_buf_s *buf)
 			BUF_TYPE_HEVC) ? READ_VREG(HEVC_STREAM_LEVEL) :
 		   _READ_ST_REG(LEVEL);
 }
+EXPORT_SYMBOL(stbuf_level);
 
 u32 stbuf_rp(struct stream_buf_s *buf)
 {

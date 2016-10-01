@@ -395,10 +395,47 @@ static struct snd_soc_jack_pin jack_pins[] = {
 	 }
 };
 
+int output_volume = 100;
+struct mutex m_volume;
+ 
+static int pcm_pb_volume_info(struct snd_kcontrol *kcontrol,
+                               struct snd_ctl_elem_info *uinfo)
+{
+	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
+	uinfo->count = 1;
+	uinfo->value.integer.min = 0;
+	uinfo->value.integer.max = 100;
+	uinfo->value.integer.step = 1;
+    return 0;
+}
+static int pcm_pb_volume_get(struct snd_kcontrol *kcontrol,
+                              struct snd_ctl_elem_value *uvalue)
+{
+	mutex_lock(&m_volume);
+    uvalue->value.integer.value[0] = output_volume & 0xff;
+	mutex_unlock(&m_volume);
+	return 0;
+}
+static int pcm_pb_volume_put(struct snd_kcontrol *kcontrol,
+                              struct snd_ctl_elem_value *uvalue)
+{
+	mutex_lock(&m_volume);
+	output_volume = uvalue->value.integer.value[0]; 
+	mutex_unlock(&m_volume);
+    return 0;
+ }
 static const struct snd_kcontrol_new aml_m8_controls[] = {
 	SOC_SINGLE_BOOL_EXT("Ext Spk Switch", 0,
 			    aml_m8_get_spk,
 			    aml_m8_set_spk),
+				{
+				.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+				.name = "Master Playback Volume",
+				.index = 0x00,
+				.info = pcm_pb_volume_info,
+				.get = pcm_pb_volume_get,
+				.put = pcm_pb_volume_put, 
+				},
 };
 
 static int aml_asoc_init(struct snd_soc_pcm_runtime *rtd)
@@ -410,6 +447,7 @@ static int aml_asoc_init(struct snd_soc_pcm_runtime *rtd)
 	int ret = 0;
 	int hp_paraments[5];
 
+    mutex_init(&m_volume);
 	p_aml_audio = snd_soc_card_get_drvdata(card);
 	ret = snd_soc_add_card_controls(codec->card, aml_m8_controls,
 					ARRAY_SIZE(aml_m8_controls));

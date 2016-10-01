@@ -966,6 +966,7 @@ void  osd_set_gbl_alpha_hw(u32 index, u32 gbl_alpha)
 		osd_wait_vsync_hw();
 	}
 }
+EXPORT_SYMBOL(osd_set_gbl_alpha_hw);
 
 u32 osd_get_gbl_alpha_hw(u32  index)
 {
