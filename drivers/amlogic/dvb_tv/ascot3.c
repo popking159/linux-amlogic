@@ -226,7 +226,7 @@ static int ascot3_enter_power_save(struct ascot3_priv *priv)
 		return 0;
 		
 	/* Loop Through setting And RFIN matching in Power Save */
-	ascot3_write_reg(priv, 0x67, 0x00);
+	ascot3_write_reg(priv, 0x67, 0x06);
 	/* Disable IF signal output (IF_OUT_SEL setting) */
 	ascot3_set_reg_bits(priv, 0x74, 0x02, 0x03);
 	/* Power save setting for analog block */

@@ -29,7 +29,7 @@
 #include "nimdetect.h"
 
 #include "ascot3.h"
-#include "cxd2837er.h"
+#include "cxd2841er.h"
 #include "mxl603.h"
 #include "avl6211.h"
 #include "mn88436.h"
@@ -50,13 +50,14 @@ static struct reset_control *dvb_uparsertop_reset_ctl;
 
 static struct wetek_nims weteknims;
 
-static struct cxd2837er_config cxd2837cfg = {
+static struct cxd2841er_config cxd2837cfg = {
 		.i2c_addr = 0x6C,
 		.if_agc = 0,
 		.ifagc_adc_range = 0x39,
 		.ts_error_polarity = 0,
 		.clock_polarity = 1,
 		.mxl603	= 0,
+		.xtal = SONY_XTAL_20500,
 };
 struct ascot3_config ascot3cfg = {
 		.i2c_address = 0x60,
@@ -369,7 +370,7 @@ static int nim_dvb_probe(struct platform_device *pdev)
 		
 		dev_info(&pdev->dev, "Checking for Sony CXD2837 DVB-C/T/T2 demod ...\n");	
 			
-		weteknims.fe[i] =  cxd2837er_attach(&cxd2837cfg, weteknims.i2c[i]);		
+		weteknims.fe[i] =  cxd2841er_attach_t_c(&cxd2837cfg, weteknims.i2c[i]);		
 		
 		if (weteknims.fe[i] != NULL) {																		
 			if (mxl603_attach(weteknims.fe[i], weteknims.i2c[i], 0x60, &mxl603cfg) == NULL) {
