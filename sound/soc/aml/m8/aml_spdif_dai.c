@@ -245,7 +245,7 @@ void aml_hw_iec958_init(struct snd_pcm_substream *substream, int samesrc)
 		pr_info("share the same clock\n");
 		aml_cbus_update_bits(AIU_CLK_CTRL, 3 << 4, 1 << 4);
 	} else if (runtime->rate == 48000 && runtime->channels == 2 && runtime->format == SNDRV_PCM_FORMAT_S16) {
-		IEC958_mode_codec = 2; /* AC3/DTS */
+		IEC958_mode_codec = 0; /* AC3/DTS */
 		pr_info("set normal 512 fs /4 fs\n");
 		aml_cbus_update_bits(AIU_CLK_CTRL, 3 << 4, 3 << 4);
 	} else {
