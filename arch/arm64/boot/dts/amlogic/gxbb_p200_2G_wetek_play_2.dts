@@ -1001,6 +1001,8 @@
 		status = "okay";
 		led_gpio = <&gpio_ao  GPIOAO_13  GPIO_ACTIVE_HIGH>;
 		led_active_low = <1>;
+		wifi_gpio =  <&gpio       GPIODV_26       GPIO_ACTIVE_LOW>;	
+ 		eth_gpio =  <&gpio       GPIODV_27       GPIO_ACTIVE_LOW>;		
 	};
 	aml_sensor0: aml-sensor@0 {
 		compatible = "amlogic, aml-thermal";
