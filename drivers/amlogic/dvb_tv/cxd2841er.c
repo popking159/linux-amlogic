@@ -3149,6 +3149,30 @@ static int cxd2841er_get_frontend(struct dvb_frontend *fe)
 	return 0;
 }
 
+static int cxd2841er_ber(struct dvb_frontend* fe, u32* ber)
+{
+	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+	*ber = 0;
+
+	cxd2841er_get_frontend(fe);
+
+	if (p->post_bit_error.stat[0].scale == FE_SCALE_COUNTER)
+		*ber = p->post_bit_error.stat[0].uvalue;
+
+	return 0;
+}
+static int cxd2841er_ss(struct dvb_frontend* fe, u16* signal_strength)
+{
+	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+	*signal_strength = 0;
+
+	cxd2841er_get_frontend(fe);
+
+	if (p->strength.stat[0].scale == FE_SCALE_DECIBEL)
+		*signal_strength = p->strength.stat[0].uvalue;
+
+	return 0;
+}
 static int cxd2841er_set_frontend_s(struct dvb_frontend *fe)
 {
 	int ret = 0, i, timeout, carr_offset;
@@ -3802,6 +3826,8 @@ static struct  dvb_frontend_ops cxd2841er_t_c_ops = {
 	.release = cxd2841er_release,
 	.set_frontend = cxd2841er_set_frontend_tc,
 	.get_frontend = cxd2841er_get_frontend,
+	.read_ber = cxd2841er_ber,
+	.read_signal_strength = cxd2841er_ss,
 	.read_status = cxd2841er_read_status_tc,
 	.tune = cxd2841er_tune_tc,
 	.i2c_gate_ctrl = cxd2841er_i2c_gate_ctrl,
