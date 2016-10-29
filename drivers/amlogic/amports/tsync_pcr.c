@@ -123,8 +123,8 @@ static u32 tsync_pcr_discontinue_threshold = (TIME_UNIT90K * 1.5);
 static u32 tsync_pcr_ref_latency = (TIME_UNIT90K * 0.3);
 
 /* use for pcr valid mode */
-static u32 tsync_pcr_max_cache_time = TIME_UNIT90K * 1.5;
-static u32 tsync_pcr_up_cache_time = TIME_UNIT90K * 1.2;
+static u32 tsync_pcr_max_cache_time = TIME_UNIT90K * 2.4;
+static u32 tsync_pcr_up_cache_time = TIME_UNIT90K * 2.2;
 /* modify it by dolby av sync */
 static u32 tsync_pcr_down_cache_time = TIME_UNIT90K * 0.8;   /* 0.6 */
 static u32 tsync_pcr_min_cache_time = TIME_UNIT90K * 0.4;    /* 0.2 */
@@ -1031,7 +1031,8 @@ static unsigned long tsync_pcr_check(void)
 		u64 ref_pcr = (u64)  tsdemux_pcr;
 		u64 cur_pcr = (u64) timestamp_pcrscr_get();
 		int64_t cur_delta = (int64_t) ref_pcr - (int64_t) cur_pcr;
-		int64_t diff = (cur_delta - tsync_pcr_stream_delta);
+//		int64_t diff = (cur_delta - tsync_pcr_stream_delta);
+		int64_t diff = cur_delta;
 
 		/* if(diff > OPEN_RECOVERY_THRESHOLD && cur_pcr<ref_pcr
 		   && play_mode!=PLAY_MODE_SPEED && need_recovery){ */
